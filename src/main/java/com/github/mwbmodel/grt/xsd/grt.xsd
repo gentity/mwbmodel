@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Initially created via https://xml.mherman.org/ by analysing document.mwb.xml in
+the test_wb_8.mwb file, then adapted.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="data">
+    <xs:complexType >
+      <xs:sequence>
+        <xs:element name="value" type="Value" />
+      </xs:sequence>
+      <xs:attribute name="document_type" use="required"/>
+      <xs:attribute name="grt_format" use="required" type="xs:string"/>
+      <xs:attribute name="version" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+    <xs:complexType name="Value" mixed="true">
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="value" type="Value"/>
+        <xs:element name="link" type="Link"/>
+      </xs:choice>
+      <xs:attribute name="_ptr_" type="xs:NMTOKEN"/>
+      <xs:attribute name="content-struct-name" type="xs:NCName"/>
+      <xs:attribute name="content-type" type="Type"/>
+      <xs:attribute name="id"/>
+      <xs:attribute name="key" type="xs:NCName"/>
+      <xs:attribute name="struct-checksum" type="xs:NMTOKEN"/>
+      <xs:attribute name="struct-name" type="xs:NCName"/>
+      <xs:attribute name="type" use="required" type="Type"/>
+    </xs:complexType>
+    <xs:complexType name="Link">
+      <xs:simpleContent>
+        <xs:extension base="xs:NMTOKEN">
+          <xs:attribute name="key" type="xs:NCName"/>
+          <xs:attribute name="struct-name" type="xs:NCName"/>
+          <xs:attribute name="type" use="required" type="Type"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  <xs:simpleType name="Type">
+	  <xs:restriction base="xs:string">
+		  <!-- object/collection types -->
+		  <xs:enumeration value="object"/>
+		  <xs:enumeration value="list"/>
+		  <xs:enumeration value="dict"/>
+		  
+		  <!-- scalars -->
+		  <xs:enumeration value="string"/>
+		  <xs:enumeration value="int"/>
+	  </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
