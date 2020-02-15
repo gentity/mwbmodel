@@ -117,6 +117,7 @@ public class GrtUnmarshallerTest {
 			"    <value key='shortfield' type='int'>30000</value>\n" +
 			"    <value key='bytefield'  type='int'>40</value>\n" +
 			"    <value key='boolfield'  type='int'>1</value>\n" +
+			"    <value key='enumfield'  type='string'>BAR</value>\n" +
 			"</value>\n" +
 			"</data>";
 		
@@ -128,6 +129,7 @@ public class GrtUnmarshallerTest {
 		assertEquals(o.shortfield, 30000);
 		assertEquals(o.bytefield, 40);
 		assertEquals(o.boolfield, true);
+		assertEquals(o.enumfield, CoercedFields.FooBar.BAR);
 	}
 	
 	@Test

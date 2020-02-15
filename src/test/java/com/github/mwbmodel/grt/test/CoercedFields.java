@@ -17,4 +17,10 @@ public class CoercedFields extends GrtObject{
 	public short shortfield;
 	public byte bytefield;
 	public boolean boolfield;
+	public FooBar enumfield;
+	
+	public enum FooBar {
+		FOO,
+		BAR
+	}
 }

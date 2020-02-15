@@ -275,10 +275,16 @@ public class GrtUnmarshaller {
 	}
 	
 	private Object attemptCoercion(Class fieldType, Object instance) {
-		if(!(instance instanceof Long)) {
+		if(instance instanceof Long) {
+			return attemptLongCoercion(fieldType, (Long)instance);
+		} else if(instance instanceof String) {
+			return attemptStringCoercion(fieldType, (String)instance);
+		} else {
 			return instance;
 		}
-		Long longbox = (Long)instance;
+	}
+	
+	private Object attemptLongCoercion(Class fieldType, Long longbox) {
 		long longval = (long)longbox;
 		Class targetType = toBoxedType(fieldType);
 		if(targetType == null) {
@@ -302,6 +308,17 @@ public class GrtUnmarshaller {
 			return longbox.byteValue();
 		} else {
 			return longbox;
+		}
+	}
+	
+	private Object attemptStringCoercion(Class fieldType, String string) {
+		if(!fieldType.isEnum()) {
+			return string;
+		}
+		try {
+			return Enum.valueOf(fieldType, string);
+		} catch(IllegalArgumentException iax) {
+			return string;
 		}
 	}
 	
