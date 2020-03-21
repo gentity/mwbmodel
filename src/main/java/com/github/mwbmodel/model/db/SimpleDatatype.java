@@ -6,11 +6,25 @@
 package com.github.mwbmodel.model.db;
 
 import com.github.mwbmodel.grt.GrtObject;
+import com.github.mwbmodel.model.db.mgmt.Rdbms;
+import java.util.List;
 
 /**
  *
  * @author count
  */
-public class SimpleDatatype extends GrtObject{
-	
+public class SimpleDatatype extends GrtObject {
+	int characterMaximumLength;
+	int characterOctetLength;
+	int dateTimePrecision;
+	List<String> flags;
+	DatatypeGroup group;
+	String name;
+	int numericPrecision;
+	int numericPrecisionRadix;
+	int numericScale;
+	int parameterFormatType;
+	Rdbms owner;
+	List<String> synonyms;
+
 }

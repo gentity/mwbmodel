@@ -27,52 +27,63 @@ public final class Loader {
 	private Loader() {
 	}
 	
-	public static Map<String,GrtObject> CONSTANTS = new HashMap<String,GrtObject>(){{
-		put("com.mysql.rdbms.mysql.datatype.tinyint", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.smallint", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.mediumint", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.int", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.bigint", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.float", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.double", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.decimal", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.char", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.varchar", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.binary", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.varbinary", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.tinytext", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.text", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.mediumtext", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.longtext", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.tinyblob", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.blob", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.mediumblob", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.longblob", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.datetime", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.datetime_f", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.date", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.time", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.time_f", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.year", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.timestamp", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.timestamp_f", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.geometry", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.point", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.real", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.nchar", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.nvarchar", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.json", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.linestring", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.polygon", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.geometrycollection", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.multipoint", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.multilinestring", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.multipolygon", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.bit", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.boolean", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.enum", new SimpleDatatype());
-		put("com.mysql.rdbms.mysql.datatype.set", new SimpleDatatype());
-	}};
+	public static Map<String,GrtObject> CONSTANTS;
+	
+	
+	static {
+		// common type groups
+		// https://github.com/mysql/mysql-workbench/blob/8.0/res/grtdata/db_datatype_groups.xml
+		
+		// mysql datatypes:
+		// https://github.com/mysql/mysql-workbench/blob/8.0/modules/db.mysql/res/mysql_rdbms_info.xml
+		
+		CONSTANTS = new HashMap<String,GrtObject>(){{
+			put("com.mysql.rdbms.mysql.datatype.tinyint", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.smallint", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.mediumint", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.int", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.bigint", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.float", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.double", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.decimal", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.char", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.varchar", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.binary", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.varbinary", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.tinytext", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.text", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.mediumtext", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.longtext", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.tinyblob", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.blob", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.mediumblob", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.longblob", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.datetime", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.datetime_f", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.date", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.time", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.time_f", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.year", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.timestamp", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.timestamp_f", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.geometry", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.point", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.real", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.nchar", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.nvarchar", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.json", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.linestring", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.polygon", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.geometrycollection", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.multipoint", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.multilinestring", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.multipolygon", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.bit", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.boolean", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.enum", new SimpleDatatype());
+			put("com.mysql.rdbms.mysql.datatype.set", new SimpleDatatype());
+		}};
+	}
 	
 	public static Document loadMwb(InputStream is) throws IOException {
 		ZipInputStream zis = new ZipInputStream(is);
