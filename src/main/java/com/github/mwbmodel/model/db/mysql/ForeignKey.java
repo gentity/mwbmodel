@@ -6,18 +6,11 @@
 package com.github.mwbmodel.model.db.mysql;
 
 import com.github.mwbmodel.grt.GrtObject;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
  * @author count
  */
-public class Schema extends GrtObject {
-	List<Table> tables = new ArrayList<>();
-
-	public List<Table> getTables() {
-		return tables;
-	}
+public class ForeignKey extends GrtObject {
 	
 }

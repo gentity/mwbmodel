@@ -14,4 +14,13 @@ import com.github.mwbmodel.model.db.mysql.Catalog;
  */
 public class Model extends GrtObject {
 	Catalog catalog;
+
+	public Catalog getCatalog() {
+		return catalog;
+	}
+
+	public void setCatalog(Catalog catalog) {
+		this.catalog = catalog;
+	}
+	
 }

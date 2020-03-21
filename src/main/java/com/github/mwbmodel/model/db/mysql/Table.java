@@ -14,5 +14,39 @@ import java.util.List;
  * @author count
  */
 public class Table extends GrtObject {
-	 List<Column> columns = new ArrayList<>();
+	private String name;
+	private List<Column> columns = new ArrayList<>();
+	private List<ForeignKey> foreignKeys = new ArrayList<>();
+	private List<Index> indices = new ArrayList<>();
+	private Index primaryKey;
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<Column> getColumns() {
+		return columns;
+	}
+
+	public List<ForeignKey> getForeignKeys() {
+		return foreignKeys;
+	}
+
+	public List<Index> getIndices() {
+		return indices;
+	}
+
+	public Index getPrimaryKey() {
+		return primaryKey;
+	}
+
+	public void setPrimaryKey(Index primaryKey) {
+		this.primaryKey = primaryKey;
+	}
+	
+	
 }

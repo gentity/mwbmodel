@@ -15,4 +15,9 @@ import java.util.List;
  */
 public class Catalog extends GrtObject {
 	List<Schema> schemata = new ArrayList<>();
+
+	public List<Schema> getSchemata() {
+		return schemata;
+	}
+	
 }

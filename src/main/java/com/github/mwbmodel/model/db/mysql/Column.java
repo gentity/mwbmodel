@@ -15,8 +15,6 @@ import java.util.List;
  */
 public class Column extends GrtObject {
 	boolean autoIncrement;
-	String characterSetName;
-	String collationName;
 	String datatypeExplicitParams;
 	String defaultValue;
 	boolean defaultValueIsNull;
@@ -27,7 +25,103 @@ public class Column extends GrtObject {
 	int scale;
 	String comment;
 	String name;
-	String oldName;
-	GrtObject owner;
 	SimpleDatatype simpleType;
+
+	public boolean isAutoIncrement() {
+		return autoIncrement;
+	}
+
+	public void setAutoIncrement(boolean autoIncrement) {
+		this.autoIncrement = autoIncrement;
+	}
+
+	public String getDatatypeExplicitParams() {
+		return datatypeExplicitParams;
+	}
+
+	public void setDatatypeExplicitParams(String datatypeExplicitParams) {
+		this.datatypeExplicitParams = datatypeExplicitParams;
+	}
+
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	public boolean isDefaultValueIsNull() {
+		return defaultValueIsNull;
+	}
+
+	public void setDefaultValueIsNull(boolean defaultValueIsNull) {
+		this.defaultValueIsNull = defaultValueIsNull;
+	}
+
+	public List<String> getFlags() {
+		return flags;
+	}
+
+	public void setFlags(List<String> flags) {
+		this.flags = flags;
+	}
+
+	public boolean isIsNotNull() {
+		return isNotNull;
+	}
+
+	public void setIsNotNull(boolean isNotNull) {
+		this.isNotNull = isNotNull;
+	}
+
+	public int getLength() {
+		return length;
+	}
+
+	public void setLength(int length) {
+		this.length = length;
+	}
+
+	public int getPrecision() {
+		return precision;
+	}
+
+	public void setPrecision(int precision) {
+		this.precision = precision;
+	}
+
+	public int getScale() {
+		return scale;
+	}
+
+	public void setScale(int scale) {
+		this.scale = scale;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public SimpleDatatype getSimpleType() {
+		return simpleType;
+	}
+
+	public void setSimpleType(SimpleDatatype simpleType) {
+		this.simpleType = simpleType;
+	}
+	
+	
 }

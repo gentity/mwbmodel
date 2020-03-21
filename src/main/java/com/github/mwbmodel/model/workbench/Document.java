@@ -7,6 +7,7 @@ package com.github.mwbmodel.model.workbench;
 
 import com.github.mwbmodel.grt.GrtObject;
 import com.github.mwbmodel.model.workbench.physical.Model;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,5 +17,9 @@ import java.util.List;
 public class Document extends GrtObject {
 	// NOTE: incomplete, the real thing has lots more fields...
 	
-	List<Model> physicalModels;
+	List<Model> physicalModels = new ArrayList<>();
+
+	public List<Model> getPhysicalModels() {
+		return physicalModels;
+	}
 }
