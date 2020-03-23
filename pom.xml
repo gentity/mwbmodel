@@ -49,11 +49,17 @@
 			<artifactId>jakarta.xml.bind-api</artifactId>
 			<version>2.3.2</version>			
 		</dependency>
-	 		<dependency>
+	 	<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.karneim</groupId>
+			<artifactId>pojobuilder</artifactId>
+			<version>4.2.3</version>
+			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>

@@ -6,11 +6,13 @@
 package com.github.mwbmodel.model.db;
 
 import com.github.mwbmodel.grt.GrtObject;
+import net.karneim.pojobuilder.GeneratePojoBuilder;
 
 /**
  *
  * @author count
  */
+@GeneratePojoBuilder
 public class DatatypeGroup extends GrtObject{
 	String caption;
 	String description;
