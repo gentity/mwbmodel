@@ -13,19 +13,19 @@ import com.github.mwbmodel.model.db.DatatypeGroup;
 import com.github.mwbmodel.model.db.DatatypeGroupBuilder;
 import com.github.mwbmodel.model.db.SimpleDatatype;
 import com.github.mwbmodel.model.db.SimpleDatatypeBuilder;
+import com.github.mwbmodel.model.db.mgmt.Rdbms;
+import com.github.mwbmodel.model.db.mgmt.RdbmsBuilder;
 import com.github.mwbmodel.model.workbench.Document;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import static com.github.mwbmodel.model.db.SimpleDatatype.Flag;
+import java.util.List;
 
 /**
  * The Façade loader class hiding the inner workings of the MWB loader mechanism.
@@ -78,33 +78,36 @@ public final class Loader {
 		}
 	}
 	
-	private static SimpleDatatype mkNumeric(String name, int precision, int precisionRadix, int scale) {
+	private static SimpleDatatype mkNumeric(String name, int precision, int precisionRadix, int scale, List<String> synonyms) {
 		return new SimpleDatatypeBuilder()
 				.withName(name)
 				.withGroup(DatatypeGroupKey.NUMERIC.getDatatypeGroup())
 				.withNumericPrecision(precision)
 				.withNumericPrecisionRadix(precisionRadix)
 				.withNumericScale(scale)
+				.withSynonyms(synonyms)
 				.build();
 	}
 	
-	private static SimpleDatatype mkString(String name, int maximumLength) {
+	private static SimpleDatatype mkString(String name, int maximumLength, List<String> synonyms) {
 		return new SimpleDatatypeBuilder()
 				.withName(name)
 				.withGroup(DatatypeGroupKey.STRING.getDatatypeGroup())
 				.withCharacterMaximumLength(maximumLength)
+				.withSynonyms(synonyms)
 				.build();
 	}
 	
-	private static SimpleDatatype mkText(String name, int maximumLength) {
+	private static SimpleDatatype mkText(String name, int maximumLength, List<String> synonyms) {
 		return new SimpleDatatypeBuilder()
 				.withName(name)
 				.withGroup(DatatypeGroupKey.TEXT.getDatatypeGroup())
 				.withCharacterMaximumLength(maximumLength)
+				.withSynonyms(synonyms)
 				.build();
 	}
 	
-	private static SimpleDatatype mkBlob(String name, int octetLength) {
+	private static SimpleDatatype mkBlob(String name, int octetLength, List<String> synonums) {
 		return new SimpleDatatypeBuilder()
 				.withName(name)
 				.withGroup(DatatypeGroupKey.BLOB.getDatatypeGroup())
@@ -135,78 +138,51 @@ public final class Loader {
 		constants.put("com.mysql.rdbms.mysql.datatype."+simpleTypeId, sdt);
 	}
 	
+	static List<String> syns(String... synonyms) {
+		return Arrays.asList(synonyms);
+	}
+	
 	static {
 		
 		// mysql datatypes:
 		// https://github.com/mysql/mysql-workbench/blob/8.0/modules/db.mysql/res/mysql_rdbms_info.xml
-		CONSTANTS = new HashMap<String,GrtObject>(){{
-			put("com.mysql.rdbms.mysql.datatype.char", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.varchar", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.binary", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.varbinary", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.tinytext", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.text", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.mediumtext", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.longtext", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.tinyblob", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.blob", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.mediumblob", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.longblob", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.datetime", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.datetime_f", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.date", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.time", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.time_f", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.year", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.timestamp", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.timestamp_f", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.geometry", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.point", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.real", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.nchar", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.nvarchar", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.json", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.linestring", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.polygon", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.geometrycollection", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.multipoint", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.multilinestring", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.multipolygon", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.bit", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.boolean", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.enum", new SimpleDatatype());
-			put("com.mysql.rdbms.mysql.datatype.set", new SimpleDatatype());
-		}};
-
-		putSDT(CONSTANTS, mkNumeric("TINYINT",    3, 0, 0));
-		putSDT(CONSTANTS, mkNumeric("SMALLINT",   5, 0, 0));
-		putSDT(CONSTANTS, mkNumeric("MEDIUMINT",  8, 0, 0));
-		putSDT(CONSTANTS, mkNumeric("INT",       10, 0, 0));
-		putSDT(CONSTANTS, mkNumeric("BIGINT",    20, 0, 0));
-		putSDT(CONSTANTS, mkNumeric("FLOAT",     53, 0, 30));
-		putSDT(CONSTANTS, mkNumeric("REAL",      53, 0, 30));
-		putSDT(CONSTANTS, mkNumeric("DOUBLE",    53, 0, 30));
-		putSDT(CONSTANTS, mkNumeric("DECIMAL",   65, 0, 30));
+		CONSTANTS = new HashMap<String,GrtObject>();
 		
-		putSDT(CONSTANTS, mkString("CHAR",       255));
-		putSDT(CONSTANTS, mkString("NCHAR",      255));
-		putSDT(CONSTANTS, mkString("VARCHAR",  65535));
-		putSDT(CONSTANTS, mkString("NVARCHAR", 65535));
+		CONSTANTS.put("com.mysql.rdbms.mysql", new RdbmsBuilder()
+			.withName("mysql")
+			.withCaption("MySQL")
+			.build()
+		);
 		
-		putSDT(CONSTANTS, mkBlob("BINARY",    255));
-		putSDT(CONSTANTS, mkBlob("VARBINARY", 255));
+		putSDT(CONSTANTS, mkNumeric("TINYINT",    3, 0, 0,  syns("BOOL", "BOOLEAN", "INT1")));
+		putSDT(CONSTANTS, mkNumeric("SMALLINT",   5, 0, 0,  syns("INT2")));
+		putSDT(CONSTANTS, mkNumeric("MEDIUMINT",  8, 0, 0,  syns("INT3", "MIDDLEINT")));
+		putSDT(CONSTANTS, mkNumeric("INT",       10, 0, 0,  syns("INTEGER", "INT4")));
+		putSDT(CONSTANTS, mkNumeric("BIGINT",    20, 0, 0,  syns("INT8", "SERIAL")));
+		putSDT(CONSTANTS, mkNumeric("FLOAT",     53, 0, 30, syns("FLOAT4")));
+		putSDT(CONSTANTS, mkNumeric("REAL",      53, 0, 30, syns()));
+		putSDT(CONSTANTS, mkNumeric("DOUBLE",    53, 0, 30, syns("FLOAT8")));
+		putSDT(CONSTANTS, mkNumeric("DECIMAL",   65, 0, 30, syns("FIXED", "NUMERIC", "DEC")));
 		
-		putSDT(CONSTANTS, mkText("TINYTEXT", 255));
-		putSDT(CONSTANTS, mkText("TEXT", 65535));
-		putSDT(CONSTANTS, mkText("MEDIUMTEXT", -24));
-		putSDT(CONSTANTS, mkText("LONGTEXT", -32));
+		putSDT(CONSTANTS, mkString("CHAR",       255, syns("CHARACTER")));
+		putSDT(CONSTANTS, mkString("NCHAR",      255, syns("NATIONAL CHAR", "NATIONAL CHARACTER")));
+		putSDT(CONSTANTS, mkString("VARCHAR",  65535, syns("CHAR VARYING", "CHARACTER VARYING", "VARCHARACTER")));
+		putSDT(CONSTANTS, mkString("NVARCHAR", 65535, syns("NATIONAL VARCHAR", "NATIONAL VARCHARACTER", "NCHAR VARCHAR", "NCHAR VARCHARACTER", "NATIONAL CHAR VARYING", "NATIONAL CHARACTER VARYING", "NCHAR VARYING")));
 		
-		putSDT(CONSTANTS, mkBlob("TINYBLOB", 0));
-		putSDT(CONSTANTS, mkBlob("BLOB", 65535));
-		putSDT(CONSTANTS, mkBlob("MEDIUMBLOB", 0));
-		putSDT(CONSTANTS, mkBlob("LONGBLOB", 0));
+		putSDT(CONSTANTS, mkBlob("BINARY",    255, syns()));
+		putSDT(CONSTANTS, mkBlob("VARBINARY", 255, syns()));
 		
-		putSDT(CONSTANTS, mkString("JSON", 0));
+		putSDT(CONSTANTS, mkText("TINYTEXT",    255,   syns()));
+		putSDT(CONSTANTS, mkText("TEXT",        65535, syns()));
+		putSDT(CONSTANTS, mkText("MEDIUMTEXT", -24,    syns("LONG", "LONG VARCHAR", "LONG CHAR VARYING")));
+		putSDT(CONSTANTS, mkText("LONGTEXT",   -32,    syns()));
+		
+		putSDT(CONSTANTS, mkBlob("TINYBLOB",   0,     syns()));
+		putSDT(CONSTANTS, mkBlob("BLOB",       65535, syns()));
+		putSDT(CONSTANTS, mkBlob("MEDIUMBLOB", 0,     syns("LONG VARBINARY")));
+		putSDT(CONSTANTS, mkBlob("LONGBLOB",   0,     syns()));
+		
+		putSDT(CONSTANTS, mkString("JSON", 0, syns()));
 		
 		putSDT(CONSTANTS,                mkDatetime("DATETIME", 8));
 		putSDT(CONSTANTS, "datetime_f",  mkDatetime("DATETIME", 8));
@@ -236,6 +212,7 @@ public final class Loader {
 				.withName("BOOLEAN")
 				.withGroup(DatatypeGroupKey.VARIOUS.getDatatypeGroup())
 				.withNumericPrecision(2)
+				.withSynonyms(Collections.singletonList("BOOL"))
 				.build()
 		);
 		putSDT(CONSTANTS, new SimpleDatatypeBuilder()

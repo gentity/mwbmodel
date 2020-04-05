@@ -6,6 +6,7 @@
 package com.github.mwbmodel.model.workbench.physical;
 
 import com.github.mwbmodel.grt.GrtObject;
+import com.github.mwbmodel.model.db.mgmt.Rdbms;
 import com.github.mwbmodel.model.db.mysql.Catalog;
 
 /**
@@ -14,6 +15,7 @@ import com.github.mwbmodel.model.db.mysql.Catalog;
  */
 public class Model extends GrtObject {
 	Catalog catalog;
+	Rdbms rdbms;
 
 	public Catalog getCatalog() {
 		return catalog;
@@ -21,6 +23,14 @@ public class Model extends GrtObject {
 
 	public void setCatalog(Catalog catalog) {
 		this.catalog = catalog;
+	}
+
+	public Rdbms getRdbms() {
+		return rdbms;
+	}
+
+	public void setRdbms(Rdbms rdbms) {
+		this.rdbms = rdbms;
 	}
 	
 }
