@@ -8,9 +8,12 @@ package com.github.mwbmodel;
 import com.github.mwbmodel.model.db.mysql.Column;
 import com.github.mwbmodel.model.db.mysql.ForeignKey;
 import com.github.mwbmodel.model.db.mysql.Index;
+import com.github.mwbmodel.model.db.mysql.IndexColumn;
+import com.github.mwbmodel.model.db.mysql.Schema;
 import com.github.mwbmodel.model.db.mysql.Table;
 import com.github.mwbmodel.model.workbench.Document;
 import com.github.mwbmodel.model.workbench.physical.Model;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.function.Function;
@@ -100,6 +103,45 @@ public class LoaderTest {
 		
 	}
 	
+	@Test
+	public void testPrint() throws IOException {
+		InputStream is = getClass().getClassLoader().getResourceAsStream("test_wb_8.mwb");
+		printAllTableNamesAndColumns(is);
+	}
+	
+	public void printAllTableNamesAndColumns(InputStream is) throws IOException {
+		Document mwbDocument = Loader.loadMwb(is);
+		
+		// print tables of first schema in first physical model
+		
+		Schema schema = mwbDocument.getPhysicalModels().get(0).getCatalog().getSchemata().get(0);
+		System.out.println("schema: " + schema.getName());
+		
+		for(Table t : schema.getTables()) {
+			System.out.println("\ttable: " + t.getName());
+			
+			
+			for(Column col : t.getColumns()) {
+				System.out.println("\t\tcolumn: " + col.getName() + " (" + col.getSimpleType().getName() + ")");
+			}
+			for(Index idx : t.getIndices()) {
+				System.out.print("\t\tindex: " + idx.getName() + " [ ");
+				for(IndexColumn icol : idx.getColumns()) {
+					System.out.print( icol.getReferencedColumn().getName() + " ");
+				}
+				System.out.println("]");
+			}
+			for(ForeignKey fk : t.getForeignKeys()) {
+				
+				System.out.print("\t\tforeign key: " + fk.getName() + "to " + fk.getReferencedTable().getName() + " [ ");
+				for(int i=0; i<fk.getColumns().size(); ++i) {
+					System.out.print(fk.getColumns().get(i).getName() + "=>" + fk.getReferencedColumns().get(i).getName());
+				}
+				System.out.println("]");;
+			}
+
+		}
+	}
 	private <T> T getNamed(List<T> list, String name, Function<T,String> nameFunction) {
 		return list.stream().filter(e -> name.equals(nameFunction.apply(e))).findAny().orElseThrow(AssertionError::new);
 	}

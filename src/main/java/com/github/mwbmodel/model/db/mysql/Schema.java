@@ -14,10 +14,20 @@ import java.util.List;
  * @author count
  */
 public class Schema extends GrtObject {
+	String name;
 	List<Table> tables = new ArrayList<>();
 
 	public List<Table> getTables() {
 		return tables;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	
 }
