@@ -6,6 +6,7 @@
 package com.github.mwbmodel.grt.test;
 
 import com.github.mwbmodel.grt.GrtObject;
+import com.github.mwbmodel.grt.annotations.GrtKey;
 
 /**
  *
@@ -15,6 +16,8 @@ public class TestObject extends GrtObject{
 	
 	private long intval;
 	private String stringval;
+	@GrtKey("altstringval field")	// use alternative key name to map this field
+	private String renamedval;
 
 	public long getIntval() {
 		return intval;
@@ -30,6 +33,14 @@ public class TestObject extends GrtObject{
 
 	public void setStringval(String stringval) {
 		this.stringval = stringval;
+	}
+
+	public String getRenamedval() {
+		return renamedval;
+	}
+
+	public void setRenamedval(String renamedval) {
+		this.renamedval = renamedval;
 	}
 	
 	

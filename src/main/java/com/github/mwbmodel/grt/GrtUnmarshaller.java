@@ -1,5 +1,6 @@
 package com.github.mwbmodel.grt;
 
+import com.github.mwbmodel.grt.annotations.GrtKey;
 import com.github.mwbmodel.util.Primitives;
 import com.github.mwbmodel.grt.model.Data;
 import com.github.mwbmodel.grt.model.Link;
@@ -19,6 +20,9 @@ import java.util.UUID;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import com.github.mwbmodel.grt.annotations.GrtValue;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -32,11 +36,24 @@ import javax.xml.bind.JAXBException;
  * @author count
  */
 public class GrtUnmarshaller {
+	
+	private static class GrtClassMapping {
+		final Class<?> clazz;
+		final Map<String,Field> keyMappings;
 
+		public GrtClassMapping(Class<?> clazz, Map<String, Field> keyMappings) {
+			this.clazz = clazz;
+			this.keyMappings = keyMappings;
+		}
+		
+	}
+	
+	private static final GrtClassMapping GRT_OBJECT_MAPPING = mkGrtClassMapping(GrtObject.class);
 	private final JAXBContext jaxbc;
 	private HashMap<String, Object> idObjectMap;
 	private List<UnresolvedLink> linkBacklog;
-	private Map<String,Class<?>> grtClassCache;
+	private Map<String,GrtClassMapping> grtClassCache;
+	private Map<Class<?>,Map<String,Enum<?>>> enumMappingCache;
 	
 	private GrtUnmarshallerConfig config;
 	
@@ -61,7 +78,8 @@ public class GrtUnmarshaller {
 		this.config = config;
 		
 		grtClassCache = new HashMap<>();
-		grtClassCache.put("GrtObject", GrtObject.class);
+		grtClassCache.put("GrtObject", mkGrtClassMapping(GrtObject.class));
+		enumMappingCache = new HashMap<>();
 		
 		try {
 			jaxbc = JAXBContext.newInstance(ObjectFactory.class.getPackage().getName());
@@ -108,7 +126,7 @@ public class GrtUnmarshaller {
 			if(u.index != null) {
 				((List)u.targetObject).set(u.index, linkTarget);
 			} else {
-				writeGrtObjectField(u.targetObject, u.link.getKey(), linkTarget);
+				writeGrtObjectField(u.mapping, u.targetObject, u.link.getKey(), linkTarget);
 			}
 		}
 	}
@@ -142,9 +160,39 @@ public class GrtUnmarshaller {
 		return o;
 	}
 	
-	private Class<?> findGrtClass(String grtClassName) throws ClassNotFoundException {
-		Class<?> clazz = grtClassCache.get(grtClassName);
-		if(clazz == null) {
+	private static GrtClassMapping mkGrtClassMapping(Class<?> clazz) {
+			
+		Map<String,Field> keyMappings = new HashMap<>();
+		Map<String,Field> naturalMappings = new HashMap<>();
+		Map<String,Field> customMappings = new HashMap<>();
+		for(Class<?> cl=clazz; cl!=null; cl=cl.getSuperclass()) {
+			for(Field f : cl.getDeclaredFields()) {
+				GrtKey grtKey = f.getDeclaredAnnotation(GrtKey.class);
+				if(grtKey != null) {
+					if(customMappings.containsKey(grtKey.value())) {
+						throw new IllegalArgumentException("In class '" + clazz + "' or one of its superclasses, a " + GrtKey.class.getSimpleName() + " annotation is present that maps a field to the same key '" + grtKey.value() + "' as another such annotation");
+					}
+					customMappings.put(grtKey.value(), f);
+				} else {
+					naturalMappings.put(f.getName(), f);
+				}
+			}
+		}
+
+		Set<String> overlap = new HashSet<>(naturalMappings.keySet());
+		overlap.retainAll(customMappings.keySet());
+		if(!overlap.isEmpty()) {
+			throw new IllegalArgumentException("in class '" + clazz.getName() + "' the following key mappings made through the " + GrtKey.class.getSimpleName() + " annotation clash with other natural field mappings: " + overlap.toString());
+		}
+		keyMappings = new HashMap<>(naturalMappings);
+		keyMappings.putAll(customMappings);
+		return new GrtClassMapping(clazz, keyMappings);
+	}
+	
+	private GrtClassMapping findGrtClassMapping(String grtClassName) throws ClassNotFoundException {
+		GrtClassMapping mapping = grtClassCache.get(grtClassName);
+		if(mapping == null) {
+			Class<?> clazz = null;
 			List<String> candidateNames = new ArrayList<>();
 			for(Package p : config.getBasePackages()) {
 				String baseName = p.getName();
@@ -163,7 +211,6 @@ public class GrtUnmarshaller {
 					if(!GrtObject.class.isAssignableFrom(clazz)) {
 						throw new RuntimeException("found class '" + clazz.getName() + "' when searching for GRT class '" + grtClassName + "', but that class is not a subclass of GrtObject");
 					}
-					grtClassCache.put(grtClassName, clazz);
 					break;
 				} catch (ClassNotFoundException ex) {
 					// attempt next package, if any
@@ -171,12 +218,64 @@ public class GrtUnmarshaller {
 				}
 			}
 			
-			if(clazz == null) {
-				throw new ClassNotFoundException("GRT class '" + grtClassName + "' not found, tried these candidates: " + Arrays.toString(candidateNames.toArray()));
+			if(clazz != null) {	
+				mapping = mkGrtClassMapping(clazz);
+				grtClassCache.put(grtClassName, mapping);
+			} else {
+				if(!config.isIgnoringMissingClasses()) {
+					throw new ClassNotFoundException("GRT class '" + grtClassName + "' not found, tried these candidates: " + Arrays.toString(candidateNames.toArray()));
+				}
 			}
 		}
 		
-		return clazz;
+		return mapping;
+	}
+	
+	private Map<String,Enum<?>> enumMappingOf(Class<?> clazz) throws IllegalArgumentException {
+		Map<String,Enum<?>> mapping = enumMappingCache.get(clazz);
+		if(mapping == null) {
+			mapping = new HashMap<>();
+			if(!clazz.isEnum()) {
+				throw new IllegalArgumentException("class is not an enum");
+			}
+			Map<String,Enum<?>> naturalMappings = new HashMap<>();
+			Map<String,Enum<?>> customMappings = new HashMap<>();
+			
+			for(Field f : clazz.getFields()) {
+				if(!f.isEnumConstant()) {
+					continue;
+				}
+				GrtValue grtValue = f.getDeclaredAnnotation(GrtValue.class);
+				Map<String,Enum<?>> mappings;
+				String mappedValue;
+				Enum<?> enumConstant;
+				try {
+					enumConstant = (Enum<?>)f.get(null);
+				} catch(IllegalAccessException iax) {
+					throw new RuntimeException(iax);
+				}
+				if(grtValue != null) {
+					if(customMappings.containsKey(grtValue.value())) {
+						throw new IllegalArgumentException("the enum " + clazz.getName() + " has invalid " + GrtValue.class.getName() + " mappings, the value '" + grtValue.value() + "' is mapped multiple times");
+					}
+					customMappings.put(grtValue.value(), enumConstant);
+				} else {
+					naturalMappings.put(enumConstant.name(), enumConstant);
+				}
+			}
+			
+			HashSet<String> overlap = new HashSet<>(naturalMappings.keySet());
+			overlap.retainAll(customMappings.keySet());
+			if(!overlap.isEmpty()) {
+				throw new IllegalStateException("key names derived from " + GrtValue.class.getSimpleName() + " annotated constants and non-annotated constants overlap: " + overlap.toString());
+			}
+			mapping = new HashMap<>(naturalMappings);
+			mapping.putAll(customMappings);
+			
+			enumMappingCache.put(clazz, mapping);
+		}
+		
+		return mapping;
 	}
 	
 	private Object deserializeListValue(Value objectValue) throws ClassNotFoundException {
@@ -206,22 +305,18 @@ public class GrtUnmarshaller {
 	private Object deserializeObjectValue(Value objectValue) throws ClassNotFoundException {
 		assert objectValue.getType() == Type.OBJECT;
 		
-		Class clazz = null;
-		try {
-			clazz = findGrtClass(objectValue.getStructName());
-		} catch(ClassNotFoundException cnfx) {
-			if(config.isIgnoringMissingClasses()) {
-				// when we cannot find the class, we are unable to deserialize
-				// this object. if we ignore this, all we can do is to return null
-				return null;
-			} else {
-				// re-throw
-				throw cnfx;
-			}
+		GrtClassMapping mapping = null;
+		mapping = findGrtClassMapping(objectValue.getStructName());
+		if(mapping == null) {
+			// when we cannot find the class, we are unable to deserialize
+			// this object. if we ignore this, all we can do is to return null
+			// However, if this problem is not ignored, findGrtClass() will 
+			// throw a ClassNotFoundException
+			return null;
 		}
 		Object o;
 		try {
-			o = clazz.newInstance();
+			o = mapping.clazz.newInstance();
 			UUID id = UUID.fromString(objectValue.getId());
 			writeGrtObjectId(o, id);
 		} catch (InstantiationException | IllegalAccessException ex) {
@@ -243,24 +338,24 @@ public class GrtUnmarshaller {
 				
 				Object instance = deserializeValue(v);
 				
-				writeGrtObjectField(o, v.getKey(), instance);
+				writeGrtObjectField(mapping, o, v.getKey(), instance);
 				
 			} else if(e.getDeclaredType() == Link.class) {
 				Link l = (Link)e.getValue();
 				
-				linkBacklog.add(new UnresolvedLink(l, o));
+				linkBacklog.add(new UnresolvedLink(l, o, mapping));
 			}
 		}
 		
 		return o;
 	}
 	
-	private void writeGrtObjectField(Object o, String key, Object instance) {
-		writeGrtObjectFieldImpl(o.getClass(), o, key, instance);
+	private void writeGrtObjectField(GrtClassMapping mapping, Object o, String key, Object instance) {
+		writeGrtObjectFieldImpl(mapping, o, key, instance);
 	}
 	
 	private void writeGrtObjectId(Object o, UUID uuid) {
-		writeGrtObjectFieldImpl(GrtObject.class, o, "id", uuid);
+		writeGrtObjectFieldImpl(GRT_OBJECT_MAPPING, o, "id", uuid);
 	}
 	
 	
@@ -316,15 +411,25 @@ public class GrtUnmarshaller {
 			return string;
 		}
 		try {
-			return Enum.valueOf(fieldType, string);
+			Enum<?> v = enumMappingOf(fieldType).get(string);
+			if(v == null) {
+				throw new IllegalArgumentException("no mapping to enum constant found for value '" + string + "'");
+			}
+			return v;
 		} catch(IllegalArgumentException iax) {
 			return string;
 		}
 	}
 	
-	private void writeGrtObjectFieldImpl(Class clazz, Object o, String key, Object instance) {
+	private void writeGrtObjectFieldImpl(GrtClassMapping mapping, Object o, String key, Object instance) {
 		try {
-			Field f = clazz.getDeclaredField(key);
+			Field f = mapping.keyMappings.get(key);
+			if(f == null) {
+				if(!config.isIgnoringMissingFields()) {
+					throw new RuntimeException("cannot resolve key '" + key + "' in GRT class representative '" + o.getClass().getName() + "', no field with that name was found");
+				}
+				return;
+			}
 			if(!f.isAccessible()) {
 				f.setAccessible(true);
 			}
@@ -332,15 +437,6 @@ public class GrtUnmarshaller {
 			// coercion
 			instance = attemptCoercion(f.getType(), instance);
 			f.set(o, instance);
-		} catch (NoSuchFieldException ex) {
-			// try base class
-			if(clazz.getSuperclass() != null) {
-				writeGrtObjectFieldImpl(clazz.getSuperclass(), o, key, instance);
-			} else {
-				if(!config.isIgnoringMissingFields()) {
-					throw new RuntimeException("cannot resolve key '" + key + "' in GRT class representative '" + o.getClass().getName() + "', no field with that name was found");
-				}
-			}
 		} catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
 			throw new RuntimeException(ex);
 		}
@@ -349,16 +445,22 @@ public class GrtUnmarshaller {
 	private static class UnresolvedLink {
 		public final Link link;
 		public final Object targetObject;
+		public final GrtClassMapping mapping;	// if the target object is a regular object, this is the mapping to use for storing the resolved link
 		public final Integer index;	// if target object is a list, stores the index of the list element to resolve
 
-		public UnresolvedLink(Link link, Object targetObject) {
-			this(link, targetObject, null);
+		public UnresolvedLink(Link link, Object targetObject, GrtClassMapping mapping) {
+			this(link, targetObject, mapping, null);
 		}
 		
 		public UnresolvedLink(Link link, Object targetObject, Integer index) {
+			this(link, targetObject, null, index);
+		}
+		
+		private UnresolvedLink(Link link, Object targetObject, GrtClassMapping mapping, Integer index) {
 			this.link = link;
 			this.targetObject = targetObject;
 			this.index = index;
+			this.mapping = mapping;
 		}
 		
 	}

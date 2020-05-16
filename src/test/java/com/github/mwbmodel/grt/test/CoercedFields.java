@@ -6,6 +6,7 @@
 package com.github.mwbmodel.grt.test;
 
 import com.github.mwbmodel.grt.GrtObject;
+import com.github.mwbmodel.grt.annotations.GrtValue;
 
 /**
  *
@@ -17,9 +18,11 @@ public class CoercedFields extends GrtObject{
 	public short shortfield;
 	public byte bytefield;
 	public boolean boolfield;
-	public FooBar enumfield;
+	public FooBar enumfield1;
+	public FooBar enumfield2;
 	
 	public enum FooBar {
+		@GrtValue("F O O")
 		FOO,
 		BAR
 	}

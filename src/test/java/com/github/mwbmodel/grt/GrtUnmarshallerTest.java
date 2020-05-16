@@ -93,6 +93,7 @@ public class GrtUnmarshallerTest {
 			"<value type='object' struct-name='test.TestObject' id='1470D384-180C-48DC-8E4B-0DE3332A2841'>\n" +
 			"    <value key='intval' type='int'>42</value>\n" +
 			"    <value key='stringval' type='string'>Hello</value>\n" +
+			"    <value key='altstringval field' type='string'>Bye</value>\n" +
 			"</value>\n" +
 			"</data>";
 		
@@ -102,6 +103,7 @@ public class GrtUnmarshallerTest {
 		assertEquals(UUID.fromString("1470D384-180C-48DC-8E4B-0DE3332A2841"), o.getId());
 		assertEquals(o.getIntval(), 42);
 		assertEquals(o.getStringval(), "Hello");
+		assertEquals(o.getRenamedval(), "Bye");
 	}
 	
 	@Test
@@ -117,7 +119,8 @@ public class GrtUnmarshallerTest {
 			"    <value key='shortfield' type='int'>30000</value>\n" +
 			"    <value key='bytefield'  type='int'>40</value>\n" +
 			"    <value key='boolfield'  type='int'>1</value>\n" +
-			"    <value key='enumfield'  type='string'>BAR</value>\n" +
+			"    <value key='enumfield1'  type='string'>BAR</value>\n" +
+			"    <value key='enumfield2'  type='string'>F O O</value>\n" +
 			"</value>\n" +
 			"</data>";
 		
@@ -129,7 +132,8 @@ public class GrtUnmarshallerTest {
 		assertEquals(o.shortfield, 30000);
 		assertEquals(o.bytefield, 40);
 		assertEquals(o.boolfield, true);
-		assertEquals(o.enumfield, CoercedFields.FooBar.BAR);
+		assertEquals(o.enumfield1, CoercedFields.FooBar.BAR);
+		assertEquals(o.enumfield2, CoercedFields.FooBar.FOO);
 	}
 	
 	@Test
