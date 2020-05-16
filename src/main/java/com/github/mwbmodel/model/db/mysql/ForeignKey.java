@@ -6,6 +6,7 @@
 package com.github.mwbmodel.model.db.mysql;
 
 import com.github.mwbmodel.grt.GrtObject;
+import com.github.mwbmodel.grt.annotations.GrtValue;
 import java.util.List;
 
 /**
@@ -13,12 +14,20 @@ import java.util.List;
  * @author count
  */
 public class ForeignKey extends GrtObject {
+	public enum ModificationRule {
+		@GrtValue("NO ACTION")
+		NO_ACTION,
+		CASCADE,
+		@GrtValue("SET NULL")
+		SET_NULL,
+		RESTRICT
+	}
 	private String name;
 	private List<Column> columns;
 	private Table referencedTable;
 	private List<Column> referencedColumns;
-	private String deleteRule;
-	private String updateRule;
+	private ModificationRule deleteRule;
+	private ModificationRule updateRule;
 	private boolean mandatory;
 	private boolean many;
 
@@ -54,19 +63,19 @@ public class ForeignKey extends GrtObject {
 		this.referencedColumns = referencedColumns;
 	}
 
-	public String getDeleteRule() {
+	public ModificationRule getDeleteRule() {
 		return deleteRule;
 	}
 
-	public void setDeleteRule(String deleteRule) {
+	public void setDeleteRule(ModificationRule deleteRule) {
 		this.deleteRule = deleteRule;
 	}
 
-	public String getUpdateRule() {
+	public ModificationRule getUpdateRule() {
 		return updateRule;
 	}
 
-	public void setUpdateRule(String updateRule) {
+	public void setUpdateRule(ModificationRule updateRule) {
 		this.updateRule = updateRule;
 	}
 

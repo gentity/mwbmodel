@@ -60,7 +60,7 @@ public class LoaderTest {
 			Column col = employeeIdColumn;
 			assertSame(lookup("com.mysql.rdbms.mysql.datatype.int"), col.getSimpleType());
 			assertTrue(col.isAutoIncrement());
-			assertTrue(col.isIsNotNull());
+			assertTrue(col.isNotNull());
 			assertEquals(-1, col.getLength());
 			assertEquals(-1, col.getPrecision());
 			assertEquals(-1, col.getScale());
@@ -86,8 +86,8 @@ public class LoaderTest {
 		assertSame(companyTable, fk_employee_company.getReferencedTable());
 		assertSame(employeeCompanyIdColumn, getNamed(fk_employee_company.getColumns(), "company_id", Column::getName));
 		assertSame(companyIdColumn, getNamed(fk_employee_company.getReferencedColumns(), "id", Column::getName));
-		assertEquals("NO ACTION", fk_employee_company.getUpdateRule());
-		assertEquals("NO ACTION", fk_employee_company.getDeleteRule());
+		assertEquals(ForeignKey.ModificationRule.NO_ACTION, fk_employee_company.getUpdateRule());
+		assertEquals(ForeignKey.ModificationRule.NO_ACTION, fk_employee_company.getDeleteRule());
 		assertTrue(fk_employee_company.isMandatory());
 		assertTrue(fk_employee_company.isMany());
 		

@@ -6,6 +6,7 @@
 package com.github.mwbmodel.model.db.mysql;
 
 import com.github.mwbmodel.grt.GrtObject;
+import com.github.mwbmodel.grt.annotations.GrtKey;
 import com.github.mwbmodel.model.db.SimpleDatatype;
 import java.util.List;
 
@@ -19,7 +20,8 @@ public class Column extends GrtObject {
 	String defaultValue;
 	boolean defaultValueIsNull;
 	List<String> flags;
-	boolean isNotNull;
+	@GrtKey("isNotNull")
+	boolean notNull;
 	int length;
 	int precision;
 	int scale;
@@ -67,12 +69,12 @@ public class Column extends GrtObject {
 		this.flags = flags;
 	}
 
-	public boolean isIsNotNull() {
-		return isNotNull;
+	public boolean isNotNull() {
+		return notNull;
 	}
 
-	public void setIsNotNull(boolean isNotNull) {
-		this.isNotNull = isNotNull;
+	public void setNotNull(boolean notNull) {
+		this.notNull = notNull;
 	}
 
 	public int getLength() {
