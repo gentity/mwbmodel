@@ -96,7 +96,7 @@ public class LoaderTest {
 		{
 			Index idx = primary;
 			assertSame(Index.Type.PRIMARY, idx.getIndexType());
-			assertTrue(idx.isIsPrimary());
+			assertTrue(idx.isPrimary());
 			assertFalse(idx.isUnique());
 			assertSame(employeeIdColumn, idx.getColumns().get(0).getReferencedColumn());
 		}
