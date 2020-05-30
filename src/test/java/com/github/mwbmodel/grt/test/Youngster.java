@@ -5,7 +5,7 @@
  */
 package com.github.mwbmodel.grt.test;
 
-import com.github.mwbmodel.grt.GrtObject;
+import com.github.upachler.mwbmodel.grt.GrtObject;
 import java.util.ArrayList;
 import java.util.List;
 

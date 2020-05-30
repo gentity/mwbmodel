@@ -5,14 +5,15 @@
  */
 package com.github.mwbmodel;
 
-import com.github.mwbmodel.model.db.mysql.Column;
-import com.github.mwbmodel.model.db.mysql.ForeignKey;
-import com.github.mwbmodel.model.db.mysql.Index;
-import com.github.mwbmodel.model.db.mysql.IndexColumn;
-import com.github.mwbmodel.model.db.mysql.Schema;
-import com.github.mwbmodel.model.db.mysql.Table;
-import com.github.mwbmodel.model.workbench.Document;
-import com.github.mwbmodel.model.workbench.physical.Model;
+import com.github.upachler.mwbmodel.Loader;
+import com.github.upachler.mwbmodel.model.db.mysql.Column;
+import com.github.upachler.mwbmodel.model.db.mysql.ForeignKey;
+import com.github.upachler.mwbmodel.model.db.mysql.Index;
+import com.github.upachler.mwbmodel.model.db.mysql.IndexColumn;
+import com.github.upachler.mwbmodel.model.db.mysql.Schema;
+import com.github.upachler.mwbmodel.model.db.mysql.Table;
+import com.github.upachler.mwbmodel.model.workbench.Document;
+import com.github.upachler.mwbmodel.model.workbench.physical.Model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;

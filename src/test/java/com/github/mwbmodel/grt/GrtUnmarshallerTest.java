@@ -5,6 +5,7 @@
  */
 package com.github.mwbmodel.grt;
 
+import com.github.upachler.mwbmodel.grt.GrtUnmarshaller;
 import com.github.mwbmodel.grt.test.CoercedFields;
 import com.github.mwbmodel.grt.test.TestObject;
 import com.github.mwbmodel.grt.test.Youngster;
