@@ -43,6 +43,24 @@ public void printAllTableNamesAndColumns(InputStream is) throws IOException {
 
 ```
 
+For a database schema model associating companies and employees, the output of the example above could look like this:
+
+```
+schema: mydb
+	table: company
+		column: id (INT)
+		column: name (VARCHAR)
+		index: PRIMARY [ id ]
+	table: employee
+		column: id (INT)
+		column: name (VARCHAR)
+		column: company_id (INT)
+		index: PRIMARY [ id ]
+		index: fk_employee_company_idx [ company_id ]
+		foreign key: fk_employee_companyto company [ company_id=>id]
+
+```
+
 ## About MySQL Workbench files and how mwbmodel loads them
 
 MySQL Workbench's object model is based on an internal system called [GRT](https://dev.mysql.com/doc/workbench/en/wb-grt-data-organization.html). MySQL Workbench files are actually zip archives, containing a couple of binary files and a `document.mwb.xml` file at the top level. This is the file that `mwbmodel` will actually read, the other files in the MWB zip archive are currently ignored.
