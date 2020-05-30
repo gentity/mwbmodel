@@ -239,7 +239,8 @@ public final class Loader {
 	 * Loads the MWB file from the provided input stream and returns
 	 * the root {@link Document} object, which holds all the data.
 	 * @param is
-	 * @return
+	 * @return	a {@link Document} object containing the MySQL Workbench 
+	 *	document loaded from the input stream.
 	 * @throws IOException 
 	 */
 	public static Document loadMwb(InputStream is) throws IOException {

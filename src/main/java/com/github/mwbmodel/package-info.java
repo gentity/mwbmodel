@@ -15,7 +15,7 @@
  */
 
 /**
- * The root package containing the {@link com.github.mwb.model.Loader} class,
+ * The root package containing the {@link com.github.mwbmodel.Loader} class,
  * used for easy loading of MWB files.
  */
 package com.github.mwbmodel;

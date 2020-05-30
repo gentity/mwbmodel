@@ -18,7 +18,7 @@
  * <p>GRT model classes root package. The classes in the subpackages model
  * the C/C++ GRT classes present in the 
  * <a href='http://mysqlworkbench.org/workbench/doc/globals/index.html'>GRT Globals Tree</a>.
- * The actual global variables instances are defined in the {@link Loader}
+ * The actual global variables instances are defined in the {@link com.github.mwbmodel.Loader}
  * class. See subpackages for details on the model classes.</p>
  * 
  * <p>The classes provided here contain bare minimum definitions required for
