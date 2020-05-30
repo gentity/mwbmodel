@@ -6,6 +6,7 @@
 package com.github.mwbmodel.model.db.mysql;
 
 import com.github.mwbmodel.grt.GrtObject;
+import com.github.mwbmodel.grt.annotations.GrtKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,8 @@ public class Index extends GrtObject{
 		FULLTEXT
 	}
 	Type indexType;
-	boolean isPrimary;
+	@GrtKey("isPrimary")
+	boolean primary;
 	String name;
 	boolean unique;
 	List<IndexColumn> columns = new ArrayList<>();
@@ -35,12 +37,12 @@ public class Index extends GrtObject{
 		this.indexType = indexType;
 	}
 
-	public boolean isIsPrimary() {
-		return isPrimary;
+	public boolean isPrimary() {
+		return primary;
 	}
 
-	public void setIsPrimary(boolean isPrimary) {
-		this.isPrimary = isPrimary;
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
 	}
 
 	public String getName() {
