@@ -10,7 +10,7 @@ import com.github.mwbmodel.grt.annotations.GrtValue;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class CoercedFields extends GrtObject{
 	public long longfield;

@@ -6,8 +6,8 @@
 package com.github.mwbmodel.model;
 
 /**
- * Resource anchor
- * @author count
+ * Resource anchor used to easily resolve the package.
+ * @author Uwe Pachler
  */
 public class R {
 }

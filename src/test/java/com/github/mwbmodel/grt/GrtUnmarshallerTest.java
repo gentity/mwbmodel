@@ -18,7 +18,7 @@ import org.junit.Test;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class GrtUnmarshallerTest {
 	

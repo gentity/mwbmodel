@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class LoaderTest {
 	

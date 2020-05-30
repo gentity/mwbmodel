@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<!--
+Copyright 2020 The Gentity Project.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+	
+	<body>
+		<p>MWBModel allows to read MySQL Workbench files. 
+		Most users will use the {@link com.github.mwbmodel.Loader} class to load 
+		MWB files. </p>
+
+		<p>Some expert users might be interested in the underlying
+		runtime model, which is a partial Java implementation of
+		the GRT runtime system of MySQL Workbench. MWB files are 
+		serializations of GRT object graphs.</p>
+
+		<p>The type definitions 
+		used by the GRT loader infrastructure, which actually represent
+		the C/C++ structs of MySQL Workbench's data structures, such as
+		tables, columns, etc. can be found in the 
+		<a href='{@docroot}com/github/mwbmodel/model/package-summary.html'>com.github.mwbmodel.model</a>
+		package.</p>
+
+		<p>The low-level GRT unmarshalling is performed using the 
+		{@link com.github.mwbmodel.grt.GrtUnmarshaller} class.</p>
+	</body>
+</html>

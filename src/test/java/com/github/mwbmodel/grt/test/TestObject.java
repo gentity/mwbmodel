@@ -10,7 +10,7 @@ import com.github.mwbmodel.grt.annotations.GrtKey;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class TestObject extends GrtObject{
 	

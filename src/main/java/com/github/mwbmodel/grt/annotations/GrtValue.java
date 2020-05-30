@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 /**
  * Annotate enum constants to define which string values in a GRT file are
  * mapped to that constant.
- * @author count
+ * @author Uwe Pachler
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

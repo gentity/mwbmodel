@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class Column extends GrtObject {
 	boolean autoIncrement;

@@ -29,13 +29,17 @@ import java.util.List;
 
 /**
  * The Façade loader class hiding the inner workings of the MWB loader mechanism.
- * @author count
+ * @author Uwe Pachler
  */
 public final class Loader {
 	
 	private Loader() {
 	}
 	
+	/**
+	 * Constants that the loader uses, like the predefined 
+	 * column types, etc.
+	 */
 	public static final Map<String,GrtObject> CONSTANTS;
 	
 	
@@ -231,6 +235,13 @@ public final class Loader {
 		}
 	}
 	
+	/**
+	 * Loads the MWB file from the provided input stream and returns
+	 * the root {@link Document} object, which holds all the data.
+	 * @param is
+	 * @return
+	 * @throws IOException 
+	 */
 	public static Document loadMwb(InputStream is) throws IOException {
 		ZipInputStream zis = new ZipInputStream(is);
 		for(ZipEntry e=zis.getNextEntry(); e!=null; e=zis.getNextEntry()) {

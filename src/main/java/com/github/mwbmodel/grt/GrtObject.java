@@ -9,7 +9,7 @@ import java.util.UUID;
 
 /**
  * Superclass for all GRT classes. GRT serialization does only work for these.
- * @author count
+ * @author Uwe Pachler
  */
 public class GrtObject {
 	private final UUID id;

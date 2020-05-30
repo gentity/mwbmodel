@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class Document extends GrtObject {
 	// NOTE: incomplete, the real thing has lots more fields...

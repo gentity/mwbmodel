@@ -10,6 +10,43 @@
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.target>8</maven.compiler.target>
 	</properties>
+	<organization>
+		<name>The Gentity Project</name>
+		<url>https://github.com/gentity/gentity</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>The Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
+	<distributionManagement>
+		<repository>
+			<id>sonatype-oss-releases</id>
+			<name>OSSRH Releases</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+		</repository>
+		<snapshotRepository>
+			<id>sonatype-oss-snapshots</id>
+			<name>OSSRH Snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+	<scm>
+		<connection>scm:git:https://github.com/gentity/mwbmodel.git</connection>
+		<developerConnection>scm:git:https://github.com/gentity/mwbmodel.git</developerConnection>
+		<url>https://github.com/gentity/mwbmodel</url>
+		<tag>HEAD</tag>
+	</scm>
+	<url>https://github.com/gentity/mwbmodel</url>
+	<developers>
+		<developer>
+			<name>Uwe Pachler</name>
+			<email>gentity.dev@gmail.com</email>
+			<organization>The Gentity Project</organization>
+			<organizationUrl>https://github.com/gentity/gentity</organizationUrl>
+		</developer>
+	</developers>
 	
 	<build>
 		<plugins>
@@ -41,7 +78,26 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-		</plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.2.0</version>
+            <executions>
+                <execution>
+                    <id>attach-javadocs</id>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <docfilessubdirs>true</docfilessubdirs>
+				<doclint>none</doclint>
+				<sourcepath>${basedir}/src/main/java:${basedir}/target/generated-sources/jaxb:${basedir}/target/generated-sources/annotations</sourcepath>
+				<overview>src/main/java/overview.html</overview>
+            </configuration>
+        </plugin>
+	</plugins>
 	</build>
 	<dependencies>
 		<dependency>

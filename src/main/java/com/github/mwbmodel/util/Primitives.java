@@ -7,7 +7,7 @@ package com.github.mwbmodel.util;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public abstract class Primitives {
 	

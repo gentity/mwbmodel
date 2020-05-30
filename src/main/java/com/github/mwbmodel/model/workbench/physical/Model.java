@@ -11,7 +11,7 @@ import com.github.mwbmodel.model.db.mysql.Catalog;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class Model extends GrtObject {
 	Catalog catalog;

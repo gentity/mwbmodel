@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * name. If the annotation is not present, the field name will match the 
  * corresponding key.
  * 
- * @author count
+ * @author Uwe Pachler
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

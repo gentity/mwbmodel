@@ -1,6 +1,7 @@
 package com.github.mwbmodel.grt;
 
 import com.github.mwbmodel.grt.annotations.GrtKey;
+import com.github.mwbmodel.grt.annotations.GrtValue;
 import com.github.mwbmodel.util.Primitives;
 import com.github.mwbmodel.grt.model.Data;
 import com.github.mwbmodel.grt.model.Link;
@@ -20,7 +21,6 @@ import java.util.UUID;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import com.github.mwbmodel.grt.annotations.GrtValue;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,8 +32,94 @@ import java.util.Set;
 
 
 /**
+ * Generic unmarshaller for GRT object tree serializations.
+ * Can unmarshal (i.e. deserialize) GRT object graphs as found in
+ * the MySQL Workbench MWB files. However, this unmarshaller is not
+ * bound to the predefined to the objects defined in the GRT globals
+ * tree, but can deserilize any GRT object serialization. 
+ * 
+ * To create an object graph, the Unmarshaller needs three inputs:
+ * <ul>
+ * <li>An {@link java.io.InputStream} providing the XML serialization</li>
+ * <li>One or more base packages containing GRT model classes that are looked up 
+ * and instantiated during the unmarshalling process</li>
+ * <li>A globals list of predefined objects that can be referenced from a GRT serialization (GRT 'globals')</li>
+ * </ul>
+ * 
+ * Note that the unmarshaller does not read MWB files directly, because
+ * these are actually Zip files with a well defined internal structure.
+ * The {@linkplain GrtUnmarshaller} is designed to read only the 
+ * XML serialization contained in that Zip file
+ * 
+ * <h2>Mapping Rules</h2>
+ * 
+ * The serialization of a GRT object graph is essentially a tree
+ * of key/value dictionaries, serialized in XML. Each value can either
+ * be a scalar value (int,String,..), a collection (dictionary/map or list),
+ * or another object (see {@link Type}). Nested objects are represented as a nested XML
+ * key/value dictionary, however, to implement cyclic references, 
+ * links to objects at other locations in the tree are possible.
+ * 
+ * Each object has a designated struct type. It is these struct types
+ * that are modelled by Java classes. Because the struct names used
+ * in GRT resemble Java package names (for instance 'db.mysql.Table'), 
+ * these are used to look up Java classes that represent the struct types.
+ * To prevent GRT files from referencing arbitrary Java classes,
+ * lookup is confined to one or more base packages. For instance, 
+ * with a base package of 'com.myapp.mybase', a GRT struct type 'foo.Bar' 
+ * would be looked up as the 'com.myapp.mybase.foo.Bar' java class.
  *
- * @author count
+ * Once a Java class was found for an object's struct type, the keys in
+ * the object's key/value pairs are mapped to fields in the Java class.
+ * A field matches a key if:
+ * <ul>
+ * <li>It has a {@link GrtKey} annotation with a matching key name</li>
+ * <li>OR its field name matches the key</li>
+ * <ul>
+ * 
+ * Currently, the following GRT basic value types are supported, and mapped
+ * to the field type accordingly. Scalar values like 
+ * {@link Type#STRING} or {@link Type#INT} are <i>coerced</i>, which means
+ * that an attempt is made to transform them to fit into the target field type:
+ * <ul>
+ *	<li>{@link Type#INT}: Maps to <i>any</i> Java integral type or boolean. values are range 
+ *	checked to fit into the target type.</li>
+ *	<li>{@link Type#STRING}: Maps to either {@link String} or an enum. An enum 
+ *	constant matches either if it has a matching {@link GrtValue} annotation,
+ *	or if its name matches the value</li>
+ *	<li>{@link Type#LIST}: Maps to {@link java.util.List}</li>
+ *	<li>{@link Type#DICT}: Maps to {@link java.util.Map}. <i>currently not supported</i></li>
+ *	<li>{@link Type#OBJECT}: Maps to any java object for which a struct class can be looked up</li>
+ * </ul>
+ * 
+ * <h2>Links</h2>
+ * 
+ * Because the XML serialization is a tree, GRT not only serializes 
+ * objects not only as subobjects in a tree, but also allows fields to
+ * <i>link</i> to other objects that are located <i>somewhere else</i>.
+ * Because each GRT object has a unique identifier (UUID), links can refer
+ * to any object in the tree. 
+ * Alternatively, links can refer to
+ * objects <i>outside</i> the tree. These links do not refer to an
+ * object's UUID, but to a designated global name that is assigned to 
+ * such an object (we also call them contants). 
+ * These objects be passed to the unmarshaller before deserialization is
+ * started.
+ * 
+ * 
+ * <h2>Unmarshaller Configuration</h2>
+ * 
+ * The unmarshaller's constructors allow for configuring base packages
+ * and basic unmarshaller behavior. Configuration covers the following
+ * aspects:
+ * <ul>
+ * <li>base packages</li>
+ * <li>provided runtime constants</li>
+ * <li>fault handling behavior<li>
+ * </ul>
+ * For details, see {@link GrtUnmarshallerConfig}.
+ * 
+ * @author Uwe Pachler
  */
 public class GrtUnmarshaller {
 	
@@ -67,7 +153,7 @@ public class GrtUnmarshaller {
 	 * package given to the GrtUnmarshaller. The first match hits; if no match is
 	 * found, unmarshalling fails.
 	 * 
-	 * @param basePackage...	 the package(s) that will appear as the package root
+	 * @param basePackage	 the package(s) that will appear as the package root
 	 * in GRT while unmarshalling
 	 */
 	public GrtUnmarshaller(ClassLoader cl, Package... basePackage) {

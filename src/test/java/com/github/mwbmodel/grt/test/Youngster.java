@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class Youngster extends GrtObject{
 	String name;

@@ -10,7 +10,7 @@ import net.karneim.pojobuilder.GeneratePojoBuilder;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 @GeneratePojoBuilder
 public class Rdbms extends GrtObject{

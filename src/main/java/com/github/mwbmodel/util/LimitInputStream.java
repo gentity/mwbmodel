@@ -10,7 +10,7 @@ import java.io.InputStream;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class LimitInputStream extends InputStream {
 	

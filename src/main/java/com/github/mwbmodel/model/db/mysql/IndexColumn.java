@@ -9,7 +9,7 @@ import com.github.mwbmodel.grt.GrtObject;
 
 /**
  *
- * @author count
+ * @author Uwe Pachler
  */
 public class IndexColumn extends GrtObject {
 	int columnLength;
