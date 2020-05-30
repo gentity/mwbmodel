@@ -81,30 +81,50 @@
 					<dependency>
 						<groupId>jakarta.xml.bind</groupId>
 						<artifactId>jakarta.xml.bind-api</artifactId>
-						<version>2.3.2</version>			
+						<version>2.3.3</version>			
 					</dependency>
 				</dependencies>
 			</plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>3.2.0</version>
-            <executions>
-                <execution>
-                    <id>attach-javadocs</id>
-                    <goals>
-                        <goal>jar</goal>
-                    </goals>
-                </execution>
-            </executions>
-            <configuration>
-                <docfilessubdirs>true</docfilessubdirs>
-				<doclint>none</doclint>
-				<sourcepath>${basedir}/src/main/java:${basedir}/target/generated-sources/jaxb:${basedir}/target/generated-sources/annotations</sourcepath>
-				<overview>src/main/java/overview.html</overview>
-            </configuration>
-        </plugin>
-	</plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<docfilessubdirs>true</docfilessubdirs>
+					<doclint>none</doclint>
+					<sourcepath>${basedir}/src/main/java:${basedir}/target/generated-sources/jaxb:${basedir}/target/generated-sources/annotations</sourcepath>
+					<overview>src/main/java/overview.html</overview>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.5.3</version>
+				<configuration>
+					<tagNameFormat>v@{project.version}</tagNameFormat>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<releaseProfiles>ossrh-release</releaseProfiles>
+				</configuration>
+                                
+				<dependencies>
+					<!-- Fixes an issue with GIT scm, see
+					https://stackoverflow.com/questions/15166781/mvn-releaseprepare-not-committing-changes-to-pom-xml -->
+					<dependency>
+						<groupId>org.apache.maven.scm</groupId>
+						<artifactId>maven-scm-provider-gitexe</artifactId>
+						<version>1.11.2</version>
+					</dependency>
+				</dependencies>
+			</plugin>                       
+		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
@@ -127,4 +147,40 @@
 
 	</dependencies>
 		
+	<profiles>
+		<profile>
+			<id>ossrh-release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>3.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles> 
 </project>

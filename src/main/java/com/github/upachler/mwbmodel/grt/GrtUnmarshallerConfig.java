@@ -30,7 +30,7 @@ public class GrtUnmarshallerConfig {
 	 * @param basePackage	list of base packages for looking up GRT classes
 	 */
 	public GrtUnmarshallerConfig(ClassLoader cl, Package... basePackage) {
-		this(cl, Collections.EMPTY_MAP, basePackage);
+		this(cl, Collections.emptyMap(), basePackage);
 	}
 	
 	/**
